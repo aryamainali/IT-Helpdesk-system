@@ -1,0 +1,156 @@
+CREATE DATABASE helpdesk_system;
+USE helpdesk_system;
+
+CREATE TABLE USERS(
+	USERNAME VARCHAR(150),
+    PASSWORD_ VARCHAR(150)
+);
+SELECT * FROM USERS;
+
+
+CREATE TABLE personnel(
+    personnel_id INT AUTO_INCREMENT PRIMARY KEY,
+    personnel_name VARCHAR(100),
+    personnel_email varchar(50),
+    job_title VARCHAR(100),
+    department VARCHAR(100)
+);
+
+
+ALTER TABLE personnel MODIFY COLUMN personnel_id INT AUTO_INCREMENT;
+
+
+SELECT * FROM personnel;
+
+
+
+CREATE TABLE equipment (
+    equipment_id INT AUTO_INCREMENT PRIMARY KEY,
+    personnel_id INT,
+    equipment_type VARCHAR(100),
+    equipment_make VARCHAR(100),
+	FOREIGN KEY (personnel_id) REFERENCES personnel(personnel_id)
+);
+
+CREATE TABLE software_license (
+    license_id INT AUTO_INCREMENT PRIMARY KEY,
+    personnel_id INT,
+    software_name VARCHAR(100),
+    valid_license BOOLEAN,
+    FOREIGN KEY (personnel_id) REFERENCES personnel(personnel_id)
+);
+
+
+CREATE TABLE problem_types (
+    problem_type_id INT AUTO_INCREMENT PRIMARY KEY,
+    problem_type_name VARCHAR(100),
+    parent_problem_type_id INT DEFAULT 0,
+    FOREIGN KEY (parent_problem_type_id) REFERENCES problem_types(problem_type_id)
+);
+DROP TABLE problem_types;
+
+
+  CREATE TABLE Operator (
+    operator_id INT AUTO_INCREMENT PRIMARY KEY,
+    operator_name VARCHAR(100),
+    operator_email VARCHAR(50)
+);
+
+CREATE TABLE call_log (
+    call_id INT AUTO_INCREMENT PRIMARY KEY,
+    caller_name VARCHAR(100),
+    caller_id INT,
+    personnel_id INT,
+    operator_name VARCHAR(100),
+    call_time TIMESTAMP,
+    computer_serial_number VARCHAR(100),
+    operating_system VARCHAR(100),
+    software VARCHAR(100),
+    problem_description VARCHAR(500),
+    solution_description VARCHAR(500),
+    solution_time TIMESTAMP,
+    advise_description VARCHAR(500),
+    problem_number INT ,
+    problem_type_id INT,
+    FOREIGN KEY (personnel_id) REFERENCES personnel(personnel_id),
+    FOREIGN KEY (problem_type_id) REFERENCES problem_types(problem_type_id)
+);
+Select * from call_log;
+    
+CREATE TABLE specialist (
+    specialist_id INT PRIMARY KEY,
+    specialist_name VARCHAR(100),
+    problem_type_id INT,
+    current_workload INT,
+    expertise VARCHAR(100), 
+    FOREIGN KEY (problem_type_id) REFERENCES problem_types(problem_type_id)
+);
+
+ALTER TABLE specialist
+ADD COLUMN expertise VARCHAR(100);
+
+
+CREATE TABLE PreviousProblems (
+    previous_problem_id INT AUTO_INCREMENT PRIMARY KEY,
+    problem_type_id INT,
+    resolution_description VARCHAR(500),
+    resolution_time TIMESTAMP,
+    call_id INT,
+    FOREIGN KEY (problem_type_id) REFERENCES problem_types(problem_type_id),
+    FOREIGN KEY (call_id) REFERENCES call_log(call_id)
+);
+
+
+CREATE TABLE relatedProblems (
+    related_problem_id INT AUTO_INCREMENT PRIMARY KEY,
+    problem_type_id INT,
+    call_id INT,
+    FOREIGN KEY (problem_type_id) REFERENCES problem_types(problem_type_id),
+    FOREIGN KEY (call_id) REFERENCES call_log(call_id)
+);
+
+
+CREATE TABLE problem_resolution (
+    resolution_id INT AUTO_INCREMENT PRIMARY KEY,
+    call_id INT,
+    resolution_time TIMESTAMP,
+    resolution_description VARCHAR(500),
+    resolution_duration INT,
+    FOREIGN KEY (call_id) REFERENCES call_log(call_id)
+);
+select* from problem_resolution;
+
+
+
+CREATE TABLE SpecialistAllocation (
+    allocation_id INT AUTO_INCREMENT PRIMARY KEY,
+    specialist_id INT,
+    call_id INT,
+    FOREIGN KEY (specialist_id) REFERENCES specialist(specialist_id),
+    FOREIGN KEY (call_id) REFERENCES call_log(call_id)
+);
+select* from SpecialistAllocation;
+
+
+CREATE TABLE Training (
+    training_id INT AUTO_INCREMENT PRIMARY KEY,
+    specialist_id INT,
+    training_name VARCHAR(100),
+    training_date DATE,
+    training_duration INT,
+    FOREIGN KEY (specialist_id) REFERENCES specialist(specialist_id)
+);
+select* from Training;
+
+
+SELECT 
+    pt.problem_type_name AS 'Problem Type',
+    COUNT(*) AS 'Number of Problems'
+FROM 
+    PreviousProblems pp
+    JOIN problem_types pt ON pp.problem_type_id = pt.problem_type_id
+GROUP BY 
+    pt.problem_type_name;
+
+
+

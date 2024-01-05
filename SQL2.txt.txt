@@ -1,0 +1,59 @@
+USE helpdesk_system;
+
+SELECT * FROM specialist
+ORDER BY current_workload ASC;
+
+
+
+SELECT * FROM personnel 
+WHERE department = 'IT Department';
+
+
+
+SELECT * FROM equipment
+WHERE 
+personnel_id ='1'
+OR 
+personnel_id ='2';
+
+
+
+
+SELECT 
+    personnel.personnel_id,
+    personnel.personnel_name,
+    equipment.equipment_type,
+    equipment.equipment_make,
+    software_license.software_name,
+    software_license.valid_license
+FROM 
+    personnel
+JOIN 
+    equipment ON personnel.personnel_id = equipment.personnel_id
+LEFT JOIN 
+    software_license ON personnel.personnel_id = software_license.personnel_id
+ORDER BY 
+    personnel.personnel_id ASC;
+    
+SELECT sl.license_id, sl.software_name, sl.valid_license, p.personnel_name, p.job_title
+FROM software_license AS sl
+RIGHT JOIN personnel AS p ON sl.personnel_id = p.personnel_id;
+
+    
+    
+    
+    
+SELECT
+    SpecialistAllocation.allocation_id,
+    SpecialistAllocation.specialist_id,
+    SpecialistAllocation.call_id,
+    call_log.caller_name,
+    call_log.call_time,
+    call_log.computer_serial_number,
+    call_log.problem_description,
+    call_log.solution_description,
+    call_log.solution_time
+FROM
+    SpecialistAllocation
+INNER JOIN
+    call_log ON SpecialistAllocation.call_id = call_log.call_id;

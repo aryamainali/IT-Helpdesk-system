@@ -1,0 +1,120 @@
+USE helpdesk_system;
+INSERT INTO USERS(USERNAME,PASSWORD_)
+	VALUES ('OPERATOR',SHA2('OPERATOR1',256)),
+			('CUSTOMER',SHA2('CUSTOMER1',256));
+
+INSERT INTO personnel (personnel_name, personnel_email, job_title, department) 
+VALUES 
+    ('Arya', 'arya@example.com', 'IT Manager', 'IT Department'),
+    ('Anup', 'anup@example.com', 'Network Administrator', 'IT Department'),
+    ('Ankit', 'ankit@example.com', 'Software Developer', 'Development Department'),
+    ('Samip', 'samip@example.com', 'INTERN', 'Development Department'),
+    ('Hari', 'hari@example.com', 'Software Developer', 'Development Department');
+
+SELECT * FROM personnel;
+delete from personnel;
+drop table personnel;
+INSERT INTO equipment (personnel_id, equipment_type, equipment_make)
+VALUES
+		(1, 'Modem', 'Cisco'),
+		(2, 'Router', 'Netgear'),
+		(3, 'Switch', 'TP-Link'),
+		(4, 'Server', 'Dell'),
+		(2, 'Firewall', 'Cisco'),
+		(1, 'Network Attached Storage', 'Synology'),
+		(3, 'Cable modem', 'Arris'),
+		(4, 'Optical Network Terminal', 'Huawei');
+select * from equipments;
+    
+        
+INSERT INTO software_license (personnel_id, software_name, valid_license)
+VALUES
+	(1, 'Windows', TRUE),
+	(2, 'Microsoft Office', TRUE),
+	(3, 'SolarWinds', FALSE),
+	(4, 'Norton', TRUE);
+    
+select* from software_license;
+delete from equipment;
+ 
+ 
+INSERT INTO Operator (operator_name, operator_email)
+VALUES
+  ('bhuban', 'bhuban.doe@example.com'),
+  ('ram', 'ram.smith@example.com'),
+  ('shyam', 'shyam.johnson@example.com'),
+  ('sampurna', 'sampurna.williams@example.com'),
+  ('samaya', 'samaya.brown@example.com');
+
+    
+INSERT INTO 
+problem_types (problem_type_id, problem_type_name, parent_problem_type_id)
+VALUES 
+	   (1, 'Network Issues', NULL),
+	   (2, 'Software Errors', NULL),
+	   (3, 'Hardware Problems', NULL),
+	   (4, 'Internet Connectivity', 1),
+	   (5, 'EmSoftware Errorsail Issues', 1),
+	   (6, 'Application Crashes', 2),
+	   (7, 'Data Corruption', 2),
+	   (8, 'Printer Malfunction', 3);
+select * from problem_types;
+       
+       
+       
+ INSERT INTO call_log (caller_name, caller_id, personnel_id, operator_name, call_time, computer_serial_number, operating_system,
+                       software, problem_description, solution_description, solution_time, advise_description, problem_number, problem_type_id)
+VALUES
+('John Tamang', 1, 1, 'Ram laghu', '2023-07-20 08:00:00', 'ABC123', 'Windows 10', 'Microsoft Office', 'Software not responding', 'Restarted software', '2023-07-20 08:05:00', 'Save work frequently', 1, 1),
+('Anit Rhrestha', 2, 2, 'Shyam Maharjan', '2023-07-20 09:00:00', 'DEF456', 'macOS', 'Adobe Photoshop', 'Tool not working', 'Reset tool settings', '2023-07-20 09:05:00', 'Check tool settings before use', 2, 2),
+('Anish Rai', 3, 3, 'Hari kumar', '2023-07-20 10:00:00', 'GHI789', 'Linux', 'GIMP', 'File not opening', 'Reinstalled software', '2023-07-20 10:05:00', 'Update software regularly', 3, 3),
+('Sujan Adhikari', 4, 4, 'Babu Rao', '2023-07-20 11:00:00', 'JKL012', 'Chrome OS', 'Google Docs', 'Document not saving', 'Contacted ISP', '2023-07-20 11:05:00', 'Check internet connection before use', 4, 4);
+select call_id, caller_name, operator_name,problem_description,solution_description,advise_description from call_log;
+select * from call_log;
+delete from call_log;
+
+INSERT INTO specialist (specialist_id, specialist_name, problem_type_id, current_workload, expertise)
+VALUES
+    (1, 'Robin', 1, 3, 'Networking'),
+    (2, 'Franky', 2, 2, 'Software'),
+    (3, 'Brook', 3, 1, 'Hardware'),
+    (4, 'Chopper', 4, 0, 'Internet Connectivity');
+    select* from specialist;
+  select * from SpecialistAllocation; 
+
+
+INSERT INTO SpecialistAllocation (specialist_id, call_id)
+VALUES
+    (1, 1),
+    (2, 2),
+    (3, 3),
+    (4, 4);
+    
+    
+INSERT INTO problem_resolution (call_id, resolution_time, resolution_description, resolution_duration)
+SELECT
+    call_id,
+    solution_time AS resolution_time,
+    solution_description AS resolution_description,
+    TIMESTAMPDIFF(MINUTE, call_time, solution_time) AS resolution_duration
+FROM call_log;
+select * from problem_resolution;
+
+    
+INSERT INTO PreviousProblems (problem_type_id, resolution_description, resolution_time, call_id)
+VALUES
+(1, 'Restarted modem', '2023-07-20 08:00:00', 1),
+(2, 'Reinstalled software', '2023-07-20 09:00:00', 2),
+(3, 'Replaced hardware', '2023-07-20 10:00:00', 3),
+(4, 'Contacted ISP', '2023-07-20 11:00:00', 4);
+
+
+
+INSERT INTO Training (specialist_id, training_name, training_date, training_duration)
+VALUES
+    (1, 'Network Basics', '2023-07-22', 3),
+    (2, 'Software Updates', '2023-07-23', 4),
+    (3, 'Hardware Repair', '2023-07-24', 6),
+    (4, 'Troubleshooting', '2023-07-25', 5);
+
+
